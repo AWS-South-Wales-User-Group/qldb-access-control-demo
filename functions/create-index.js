@@ -21,7 +21,7 @@ async function main() {
     try {
         await createIndex(driver, tableName, indexName);
     } catch (e) {
-        console.log(`Error creating table: ${e}`);
+        console.log(`Error: ${e}`);
         process.exit(1);
     }
     driver.close();

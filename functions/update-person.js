@@ -14,19 +14,13 @@ async function main() {
     const args = process.argv.slice(2);
     const email = args[0];
 
-    const firstName = `${Faker.name.firstName()}`;
-    const lastName = `${Faker.name.lastName()}`;
     const street = `${Faker.address.streetName()}`;
     const state = `${Faker.address.state()}`;
     const zipCode = `${Faker.address.zipCode()}`;
 
-    const person = {
-        firstName, lastName, email, street, state, zipCode
-    };
-
     console.log("Create QLDB Driver");
     const driver = getQldbDriver();
-    console.log(`Attempting to create new Person document`);
+    console.log(`Attempting to update Person document`);
 
     try {
         await driver.executeLambda(async (txn) => {
@@ -34,19 +28,12 @@ async function main() {
             // Check if the record already exists assuming email unique
             console.log('Check to see if email unique')
             const recordsReturned = await checkEmailUnique(txn, email);
-            if (recordsReturned != 0) {
+            if (recordsReturned != 1) {
                 process.exit(1);
             }
 
-            const result = await createPerson(txn, person);
-            const docIdArray = result.getResultList();
-            const id = docIdArray[0].get('documentId').stringValue();
-            // Update the record to add the document ID as the GUID in the payload
-            await addGuid(txn, id, email);
-            const personDoc = {
-                id, firstName, lastName, email, street, state, zipCode
-            };
-            console.log(`New person added:\n ${JSON.stringify(personDoc, null, 2)}`)
+            const result = await updatePerson(txn, email, street, state, zipCode);
+            console.log(`Person details updated`)
         });
     
     } catch (e) {
@@ -65,23 +52,15 @@ async function checkEmailUnique(txn, email) {
       if (recordsReturned === 0) {
         console.log(`No records found for ${email}`);
       } else {
-        console.log(`Record already exists for ${email}`);
+        console.log(`Record found for ${email}`);
       }
     });
     return recordsReturned;
 }
       
- 
-async function addGuid(txn, docId, email) {
-    const statement = 'UPDATE Person as b SET b.id = ? WHERE b.email = ?';
-    return txn.execute(statement, docId, email);
-  }
-
-
-
-async function createPerson(txn, person) {
-    const statement = 'INSERT INTO Person ?';
-    return txn.execute(statement, person);
+async function updatePerson(txn, email, street, state, zipCode) {
+    const statement = 'UPDATE Person SET street = ?, state = ?, zipCode = ? WHERE email = ?';
+    return txn.execute(statement, street, state, zipCode, email);
 }
 
 main();
