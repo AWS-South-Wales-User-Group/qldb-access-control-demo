@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# assume admin-role
+# assume super user role
 aws sts assume-role --role-arn arn:aws:iam::082136225280:role/qldb-iam-super --role-session-name qldb-super > /tmp/super_creds.txt
 
 # export the keys
@@ -16,5 +16,5 @@ printenv AWS_ACCESS_KEY_ID
 echo AWS_SESSION_TOKEN
 printenv AWS_SESSION_TOKEN
 
-# should see the previously created ledger
-aws qldb list-ledgers
+# print out the current identity
+aws sts get-caller-identity

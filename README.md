@@ -12,67 +12,80 @@ In order to run the demo, the following is required:
 
 ## Setup
 
-To setup the ledger and create the required roles, run the following command:
+To setup the ledger and create the required roles, edit the `qldb-access-control.yaml` CloudFormation template and replace the `{USER_NAME}` value with your current user, that will have the ability to assume the various roles. 
+
+```yaml
+    Statement: 
+        - 
+        Effect: "Allow"
+        Principal:
+            AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/{USER_NAME}"
+        Action: 
+            - "sts:AssumeRole"
+```
+
+Once you have done this, run the following command:
 
 ```shell
 aws cloudformation deploy --template-file ./qldb-access-control.yaml --stack-name qldb-access-control --capabilities CAPABILITY_NAMED_IAM
 ```
 
+As well as creating a QLDB Ledger with the name `qldb-access-control` it sets up the following roles:
 
 | Role Name       | Description    |Create Table | Create Index | Create | Read | Update | Delete | History |  
 | --------------- |:--------------:| :----------:| :-----------:| :-----:| :---:| :-----:| :-----:| :------:|
-| qldb-iam-super  | Super user     | Yes         | Yes          | Yes    | Yes  | Yes    | Yes    | Yes     | 
+| qldb-iam-super  | Super user     | Yes         | Yes          | Yes    | Yes  | Yes    | Yes    | Yes     |
 | qldb-iam-admin  | Admin user     | No          | No           | Yes    | Yes  | Yes    | Yes    | Yes     |
 | qldb-iam-audit  | Audit user     | No          | No           | No     | Yes  | No     | No     | Yes     |
 | qldb-iam-ro     | Read only user | No          | No           | No     | Yes  | No     | No     | No      |
 
+## Assuming a role
 
+A number of scripts have been provided to help assume the various roles.
 
+To assume the super user role run the following command:
 
-aws sts assume-role --role-arn arn:aws:iam::082136225280:role/qldb-access-control-admin --role-session-name qldb-admin
+```shell
+source setupSuperUser.sh
+```
 
-
-
-The binaries should just run, but on OS X and Linux you may need to make them executable first using chmod +x jq.
-chmod u+r+x setup.sh
-
-
-source setupAdmin.sh
-sets it in your current shell
-
-aws sts get-caller-identity
+This scripts prints out the current caller identity at the end, where you should see the following:
 
 ```json
 {
-    "UserId": "AROARGH5TKYAIG55KWIJ7:qldb-admin",
-    "Account": "082136225280",
-    "Arn": "arn:aws:sts::082136225280:assumed-role/qldb-access-control-admin/qldb-admin"
+    "UserId": "{UNIQUE_ID}:qldb-super",
+    "Account": "{ACCOUNT_ID}",
+    "Arn": "arn:aws:sts::{ACCOUNT_ID}:assumed-role/qldb-iam-super/qldb-super"
 }
 ```
 
-UserId -> (string)
-
-The unique identifier of the calling entity. The exact value depends on the type of entity that is making the call. The values returned are those listed in the aws:userid column in the Principal table found on the Policy Variables reference page in the IAM User Guide .
-Account -> (string)
-
-The AWS account ID number of the account that owns or contains the calling entity.
-Arn -> (string)
-
-The AWS ARN associated with the calling entity.
-
-
+Before assuming another role, or if your security token expires, you can run the following command:
 
 ```shell
-unset AWS_ACCESS_KEY_ID;
-unset AWS_SESSION_TOKEN;
-unset AWS_SECRET_ACCESS_KEY;
+source unset.sh
 ```
 
+This will unset the current saved session attributes, and allow you to run the relevant script to assume the same or different role.
 
-npm install amazon-qldb-driver-nodejs --save
-npm install aws-sdk --save
-npm install ion-js --save
-npm install jsbi --save
+The binaries should just run, but on OS X and Linux you may need to make them executable first:
 
+```shell
+chmod u+r+x *.sh
+```
 
+## Task 1: Create Table and Index
 
+The first task is to create a table and associated index in the ledger.
+
+1. Assume the super user role
+2. Create a table called `Person` by using the following command in the project root:
+
+```shell
+node functions/create-table Person
+```
+
+3. Create an index called `email` on this table using the following command in the project root:
+
+```shell
+node functions/create-index Person email
+```
