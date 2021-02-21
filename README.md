@@ -109,3 +109,13 @@ source setupAdmin.sh
 node functions/create-table Test
 ```
 
+## Task 2: Add Document to Table
+
+
+## Task 3: Update Document in Table
+
+
+## Task 4: View Current Revision from Table
+
+
+## Task 5: View History of Document
