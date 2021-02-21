@@ -17,23 +17,22 @@ async function main() {
     console.log("Create QLDB Driver");
     const driver = getQldbDriver();
     console.log(`Attempting to create table ${tableName}`);
-    try {
-        await createTable(driver, tableName);
-    } catch (e) {
-        console.log(`Error creating table: ${e}`);
-        process.exit(1);
-    }
+    await driver.executeLambda(async (txn) => {
+
+        try {
+            await createTable(txn, tableName);
+            console.log('Table created');
+        } catch (e) {
+            console.log(`Error creating table: ${e}`);
+            process.exit(1);
+        }
+    });
     driver.close();
 }
 
-async function createTable(driver, tableName) {
+async function createTable(txn, tableName) {
     const statement = `CREATE TABLE ${tableName}`;
-    await driver.executeLambda(async (txn) => {
-        return txn.execute(statement).then((result) => {
-            console.log(`Successfully created table ${tableName}.`);
-            return result;
-        });
-    });
+    return txn.execute(statement)
 }
 
 main();

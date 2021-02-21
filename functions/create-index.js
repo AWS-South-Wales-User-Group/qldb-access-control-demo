@@ -18,23 +18,23 @@ async function main() {
     console.log("Create QLDB Driver");
     const driver = getQldbDriver();
     console.log(`Attempting to add index ${indexName} to table ${tableName}`);
-    try {
-        await createIndex(driver, tableName, indexName);
-    } catch (e) {
-        console.log(`Error: ${e}`);
-        process.exit(1);
-    }
-    driver.close();
-}
 
-async function createIndex(driver, tableName, indexAttribute) {
-    const statement = `CREATE INDEX on ${tableName} (${indexAttribute})`;
     await driver.executeLambda(async (txn) => {
-        return txn.execute(statement).then((result) => {
-            console.log(`Successfully created index ${indexAttribute} on table ${tableName}.`);
-            return result;
-        });
+        try {
+            await createIndex(txn, tableName, indexName);
+            console.log('Index added to table');
+        } catch (e) {
+            console.log(`Error: ${e}`);
+            process.exit(1);
+        }
+        driver.close();
     });
 }
+
+async function createIndex(txn, tableName, indexAttribute) {
+    const statement = `CREATE INDEX on ${tableName} (${indexAttribute})`;
+    return txn.execute(statement);
+}
+    
 
 main();
