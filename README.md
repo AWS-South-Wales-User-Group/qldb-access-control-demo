@@ -78,6 +78,11 @@ chmod u+r+x *.sh
 The first task is to create a table and associated index in the ledger.
 
 1. Assume the super user role
+
+```shell
+source setupSuperUser.sh
+```
+
 2. Create a table called `Person` by using the following command in the project root:
 
 ```shell
@@ -89,3 +94,18 @@ node functions/create-table Person
 ```shell
 node functions/create-index Person email
 ```
+
+4. Create another index called `id` on this table
+
+```shell
+node functions/create-index Person id
+```
+
+5. Switch role to another user and see what happens when you try and create a new table or index
+
+```shell
+source unset.sh
+source setupAdmin.sh
+node functions/create-table Test
+```
+
