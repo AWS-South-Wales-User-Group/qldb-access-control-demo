@@ -21,7 +21,7 @@ Resources:
           - 
             Effect: "Allow"
             Principal:
-              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/MattLewis"
+              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/{USER_NAME}"
             Action: 
               - "sts:AssumeRole"
       Path: "/"
@@ -54,7 +54,7 @@ Resources:
           - 
             Effect: "Allow"
             Principal:
-              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/MattLewis"
+              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/{USER_NAME}"
             Action: 
               - "sts:AssumeRole"
       Path: "/"
@@ -84,7 +84,7 @@ Resources:
           - 
             Effect: "Allow"
             Principal:
-              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/MattLewis"
+              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/{USER_NAME}"
             Action: 
               - "sts:AssumeRole"
       Path: "/"
@@ -112,7 +112,7 @@ Resources:
           - 
             Effect: "Allow"
             Principal:
-              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/MattLewis"
+              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/{USER_NAME}"
             Action: 
               - "sts:AssumeRole"
       Path: "/"

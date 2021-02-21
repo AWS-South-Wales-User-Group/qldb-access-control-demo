@@ -111,11 +111,92 @@ node functions/create-table Test
 
 ## Task 2: Add Document to Table
 
+The second task is to add a new document to the table that has been created.
+
+1. Assume the admin user role
+
+```shell
+source setupAdmin.sh
+```
+
+2. Create a document in the `Person` table specifying a memorable email address by using the following command:
+
+```shell
+node functions/create-person matt@email.com
+```
+
+3. Switch role to another user and see what happens when you try and create a new record
+
+```shell
+source unset.sh
+source setupReadOnly.sh
+node functions/create-person matt1@email.com
+```
 
 ## Task 3: Update Document in Table
 
+The third task is to update the document that has been already been created.
+
+1. Assume the admin user role
+
+```shell
+source setupAdmin.sh
+```
+
+2. Update the document in the `Person` table specifying the memorable email address by using the following command:
+
+```shell
+node functions/update-person matt@email.com
+```
+
+3. Switch role to another user and see what happens when you try and update the record
+
+```shell
+source unset.sh
+source setupReadOnly.sh
+node functions/update-person matt@email.com
+```
 
 ## Task 4: View Current Revision from Table
 
+The fourth task is to view the current state of a document in the table.
+
+1. Assume the Read Only user role
+
+```shell
+source setupReadOnly.sh
+```
+
+2. Retrieve the current version of the document in the `Person` table by using the following command:
+
+```shell
+node functions/get-person matt@email.com
+```
 
 ## Task 5: View History of Document
+
+The fifth task is to view the full revision history of a document in the table.
+
+1. Assume the audit user role
+
+```shell
+source setupAudit.sh
+```
+
+2. Get the whole document revision history by using the following command:
+
+```shell
+node functions/get-person-history-email matt@email.com
+```
+
+3. Switch role to another user and see what happens when you try and retrieve the history
+
+```shell
+source unset.sh
+source setupReadOnly.sh
+node functions/get-person-history-email matt@email.com
+```
+
+## Bonus Tasks
+
+There are additional functions to delete a document and to view history using the unique id of the document, which has been included in the document that gets returned. Try deleting a document, and then getting the current version, and then the full revision history of the document in question.
