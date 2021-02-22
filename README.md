@@ -200,3 +200,13 @@ node functions/get-person-history-email matt@email.com
 ## Bonus Tasks
 
 There are additional functions to delete a document and to view history using the unique id of the document, which has been included in the document that gets returned. Try deleting a document, and then getting the current version, and then the full revision history of the document in question.
+
+## Tidying up resources
+
+To remove all resources, you will need to assume the role of a user with relevant permissions to interact with QLDB and CloudFormation. After that, you can remove the deletion protection for the given ledger and remove the stack.
+
+```shell
+source unset.sh
+aws qldb update-ledger --name qldb-access-control --no-deletion-protection
+aws cloudformation delete-stack --stack-name qldb-access-control
+```
