@@ -1,4 +1,3 @@
-const { FileSystemCredentials } = require('aws-sdk');
 const { getQldbDriver } = require('./helper/get-qldb-driver');
 
 let driver;
@@ -20,8 +19,10 @@ async function main() {
     await driver.executeLambda(async (txn) => {
 
         try {
-            await createTable(txn, tableName);
-            console.log('Table created');
+            const result = await createTable(txn, tableName);
+            const tableIdArray = result.getResultList();
+            const tableId = tableIdArray[0].get('tableId').stringValue();
+            console.log('Table created: ' + tableId);
         } catch (e) {
             console.log(`Error creating table: ${e}`);
             process.exit(1);

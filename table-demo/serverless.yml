@@ -1,0 +1,81 @@
+service: qldb-access-table
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: eu-west-1
+  logRetentionInDays: 7 # Set the default RetentionInDays for a CloudWatch LogGroup
+
+plugins:
+  - serverless-cloudformation-sub-variables
+  - serverless-iam-roles-per-function
+
+functions:
+
+  qldbAccessTable:
+    name: qldb-access-table-${self:provider.stage}
+    handler: functions/qldb-access-table.handler
+    memorySize: 512
+    timeout: 6
+    environment:
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED	: "1"
+    iamRoleStatements:
+      - Effect: Allow
+        Action: 
+          - qldb:SendCommand
+          - qldb:PartiQL*
+        Resource: 
+          - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control"
+          - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control/*"
+
+
+resources:
+  Resources:
+
+#    qldbLedger:
+#      Type: AWS::QLDB::Ledger
+#      Properties:
+#        Name: qldb-bicycle-licence-${self:provider.stage}
+#        DeletionProtection: false
+#        PermissionsMode: ALLOW_ALL
+#        Tags:
+#          - 
+#            Key: name
+#            Value: qldb-bicycle-licence
+
+    qldbTable:
+      Type: Custom::qldbTable
+      Properties:
+        ServiceToken: !GetAtt QldbAccessTableLambdaFunction.Arn
+        Version: 1.0  #change this to force redeploy
+
+    QLDBPersonReadOnlyRole:
+      Type: 'AWS::IAM::Role'
+      DependsOn: qldbTable
+      Properties: 
+        AssumeRolePolicyDocument: 
+          Version: "2012-10-17"
+          Statement: 
+            - Effect: "Allow"
+              Principal:
+                AWS: "arn:aws:iam::#{AWS::AccountId}:user/MattLewis"
+              Action: 
+                - "sts:AssumeRole"
+        Path: "/"
+        Policies:
+          - PolicyName: qldb-iam-ro-person
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - 'qldb:SendCommand'
+                    - 'qldb:PartiQLSelect'
+                  Resource:
+                    - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control/"
+                    - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control/table/#{qldbTable.keeperId}/*"
+        RoleName: qldb-iam-ro-person
+

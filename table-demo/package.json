@@ -1,0 +1,23 @@
+{
+  "name": "table-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "functions/qldb-access-table.js",
+  "dependencies": {
+    "amazon-qldb-driver-nodejs": "^2.1.1",
+    "aws-sdk": "^2.848.0",
+    "cfn-response-promise": "^1.1.0",
+    "ion-js": "^4.1.0",
+    "jsbi": "^3.1.4"
+  },
+  "devDependencies": {
+    "-": "0.0.1",
+    "serverless-cloudformation-sub-variables": "^0.2.1",
+    "serverless-iam-roles-per-function": "^3.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matt Lewis",
+  "license": "ISC"
+}
