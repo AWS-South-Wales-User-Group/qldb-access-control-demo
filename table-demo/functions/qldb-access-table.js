@@ -47,7 +47,7 @@ module.exports.handler = async (event, context) => {
 
           } catch (e) {
               console.error(`Error creating table: ${e}`);
-              process.exit(1);
+              await response.send(event, context, response.FAILED);
           } finally {
             driver.close();
           }
