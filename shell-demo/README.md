@@ -28,7 +28,7 @@ To setup the ledger and create the required roles, edit the `qldb-access-control
 Once you have done this, run the following command:
 
 ```shell
-aws cloudformation deploy --template-file ./qldb-access-control.yaml --stack-name qldb-access-control --capabilities CAPABILITY_NAMED_IAM
+$ aws cloudformation deploy --template-file ./qldb-access-control.yaml --stack-name qldb-access-control --capabilities CAPABILITY_NAMED_IAM
 ```
 
 As well as creating a QLDB Ledger with the name `qldb-access-control` it sets up the following roles:
@@ -253,7 +253,7 @@ There are additional functions to delete a document and to view history using th
 To remove all resources, you will need to assume the role of a user with relevant permissions to interact with QLDB and CloudFormation. After that, you can remove the deletion protection for the given ledger and remove the stack.
 
 ```shell
-source unset.sh
-aws qldb update-ledger --name qldb-access-control --no-deletion-protection
-aws cloudformation delete-stack --stack-name qldb-access-control
+$ source unset.sh
+$ aws qldb update-ledger --name qldb-access-control --no-deletion-protection
+$ aws cloudformation delete-stack --stack-name qldb-access-control
 ```
