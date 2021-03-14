@@ -230,7 +230,7 @@ This uses the PartiQL history function, and you will need the unique id of the d
 Retrieve the revision history using the id as follows:
 
 ```shell
-> SELECT * FROM history( Person) WHERE metadata.id = '<id>'
+> SELECT * FROM history(Person) WHERE metadata.id = '<id>'
 ```
 
 3. Switch role to another user and see what happens when you try and retrieve the history
@@ -241,7 +241,7 @@ $ source unset.sh
 $ source setupReadOnly.sh
 $ qldbshell --region <region_code> --ledger qldb-access-control
 
-> SELECT * FROM history( Person) WHERE metadata.id = '<id>'
+> SELECT * FROM history(Person) WHERE metadata.id = '<id>'
 ```
 
 ## Bonus Tasks
