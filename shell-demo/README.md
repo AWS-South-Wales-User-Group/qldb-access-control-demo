@@ -253,6 +253,10 @@ Retrieve the revision history using the id as follows:
 > SELECT * FROM history(Person) WHERE metadata.id = '<id>'
 ```
 
+## Bonus Task
+
+As a bonus task, look to lock down permission to a specific table in a ledger. To do this, you need to include the table ID in the policy. For more information on how to do this, go to the [readme](../table-demo) in the table-demo folder.
+
 ## Tidying up resources
 
 To remove all resources, you will need to assume the role of a user with relevant permissions to interact with QLDB and CloudFormation. After that, you can remove the deletion protection for the given ledger and remove the stack.
