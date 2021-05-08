@@ -254,6 +254,5 @@ To remove all resources, you will need to assume the role of a user with relevan
 
 ```shell
 $ source unset.sh
-$ aws qldb update-ledger --name qldb-access-control --no-deletion-protection
 $ aws cloudformation delete-stack --stack-name qldb-access-control
 ```

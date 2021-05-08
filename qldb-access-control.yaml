@@ -1,0 +1,137 @@
+Description: Template to set up ledger and roles
+Resources: 
+
+  QLDBAccessControl:
+    Type: "AWS::QLDB::Ledger"
+    Properties:
+      DeletionProtection: false
+      Name: "qldb-access-control"
+      PermissionsMode: "ALLOW_ALL"
+      Tags:
+        - Key: "name"
+          Value: "qldb-access-control"
+
+  QLDBSuperRole:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal:
+              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/MattLewis"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: qldb-iam-super
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'qldb:SendCommand'
+                  - 'qldb:PartiQL*'
+                  - 'qldb:ListLedgers'
+                Resource:
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/*"
+              - Effect: Allow
+                Action:
+                  - 'qldb:ListLedgers'
+                Resource:
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/*"
+      RoleName: qldb-iam-super
+
+  QLDBAdminRole:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal:
+              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/MattLewis"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: qldb-iam-admin
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'qldb:SendCommand'
+                  - 'qldb:PartiQLDelete'
+                  - 'qldb:PartiQLAppend'
+                  - 'qldb:PartiQLSelect'
+                  - 'qldb:PartiQLHistoryFunction'
+                Resource:
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/*"
+      RoleName: qldb-iam-admin
+
+  QLDBAuditRole:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal:
+              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/MattLewis"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: qldb-iam-audit
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'qldb:SendCommand'
+                  - 'qldb:PartiQLSelect'
+                  - 'qldb:PartiQLHistoryFunction'
+                Resource:
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/*"
+      RoleName: qldb-iam-audit
+
+  QLDBReadOnlyRole:
+    Type: 'AWS::IAM::Role'
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal:
+              AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/MattLewis"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: qldb-iam-ro
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'qldb:SendCommand'
+                  - 'qldb:PartiQLSelect'
+                Resource:
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/*"
+      RoleName: qldb-iam-ro
+
+Outputs:
+  qldbAccessControlLedger:
+    Value:
+      Ref: QLDBAccessControl
+    Export:
+      Name: qldb-access-control-demo
