@@ -140,13 +140,13 @@ WARNING: Error while executing query: An error occurred (AccessDeniedException) 
 
 The second task is to add a new document to the table that has been created.
 
-1. Assume the admin user role
+### Assume the admin user role
 
 ```shell
 > source setupAdmin.sh
 ```
 
-2. Login to the QLDB shell and create a document in the `Person` table specifying a memorable email address by using the following command:
+### Login to the QLDB shell and create a document in the `Person` table specifying a memorable email address
 
 ```shell
 > qldb --ledger qldb-access-control
@@ -156,7 +156,7 @@ The second task is to add a new document to the table that has been created.
 
 This will return the unique id of this document. Make a note of this value as you will need it later
 
-3. Switch role to another user and see what happens when you try and create a new record
+### Switch role to another user and see what happens when you try and create a new record
 
 ```shell
 > exit # Exit the QLDB shell
@@ -173,28 +173,28 @@ This should return an error message due to insufficient permissions.
 
 The third task is to update the document that has been already been created.
 
-1) Assume the admin user role
+### Assume admin user role
 
 ```shell
 > source setupAdmin.sh
 ```
 
-2) Update the document in the `Person` table specifying the memorable email address by using the following command:
+### Update the document in the `Person` table specifying the memorable email address
 
 ```shell
-$ qldbshell --region <region_code> --ledger qldb-access-control
+> qldb --ledger qldb-access-control
 
 > UPDATE Person SET colour='Red' where email='matt@test.com'
 ```
 
-3. Switch role to another user and see what happens when you try and update the record
+### Switch role to another user and see what happens when you try and update the record
 
 ```shell
 > exit # Exit the QLDB shell
-$ source unset.sh
-$ source setupReadOnly.sh
+> source unset.sh
+> source setupReadOnly.sh
 
-$ qldbshell --region <region_code> --ledger qldb-access-control
+> qldb --ledger qldb-access-control
 
 > UPDATE Person SET colour='Brown' where email='matt@test.com'
 ```
@@ -203,16 +203,16 @@ $ qldbshell --region <region_code> --ledger qldb-access-control
 
 The fourth task is to view the current state of a document in the table.
 
-1. Assume the Read Only user role
+### Assume the Read Only user role
 
 ```shell
-source setupReadOnly.sh
+> source setupReadOnly.sh
 ```
 
-2. Retrieve the current version of the document in the `Person` table by using the following command:
+### Retrieve the current version of the document in the `Person` table
 
 ```shell
-$ qldbshell --region <region_code> --ledger qldb-access-control
+> qldb --ledger qldb-access-control
 
 > SELECT * FROM Person where email='matt@test.com'
 ```
@@ -221,14 +221,14 @@ $ qldbshell --region <region_code> --ledger qldb-access-control
 
 The fifth task is to view the full revision history of a document in the table.
 
-1. Assume the audit user role and access the shell
+### Assume the audit user role and access the shell
 
 ```shell
-source setupAudit.sh
-$ qldbshell --region <region_code> --ledger qldb-access-control
+> source setupAudit.sh
+> qldb --ledger qldb-access-control
 ```
 
-2. Get the whole document revision history
+### Get the whole document revision history
 
 This uses the PartiQL history function, and you will need the unique id of the document. If you did not make a note in Task 2 above, then you can retrieve the id from the committed history using the following command:
 
@@ -242,26 +242,22 @@ Retrieve the revision history using the id as follows:
 > SELECT * FROM history(Person) WHERE metadata.id = '<id>'
 ```
 
-3. Switch role to another user and see what happens when you try and retrieve the history
+### Switch role to another user and see what happens when you try and retrieve the history
 
 ```shell
 > exit # Exit the QLDB shell
-$ source unset.sh
-$ source setupReadOnly.sh
-$ qldbshell --region <region_code> --ledger qldb-access-control
+> source unset.sh
+> source setupReadOnly.sh
+> qldb --ledger qldb-access-control
 
 > SELECT * FROM history(Person) WHERE metadata.id = '<id>'
 ```
-
-## Bonus Tasks
-
-There are additional functions to delete a document and to view history using the unique id of the document, which has been included in the document that gets returned. Try deleting a document, and then getting the current version, and then the full revision history of the document in question.
 
 ## Tidying up resources
 
 To remove all resources, you will need to assume the role of a user with relevant permissions to interact with QLDB and CloudFormation. After that, you can remove the deletion protection for the given ledger and remove the stack.
 
 ```shell
-$ source unset.sh
-$ aws cloudformation delete-stack --stack-name qldb-access-control
+> source unset.sh
+> aws cloudformation delete-stack --stack-name qldb-access-control
 ```
