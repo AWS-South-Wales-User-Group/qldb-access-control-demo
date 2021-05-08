@@ -8,11 +8,13 @@
     "aws-sdk": "^2.848.0",
     "cfn-response-promise": "^1.1.0",
     "ion-js": "^4.1.0",
-    "jsbi": "^3.1.4"
+    "jsbi": "^3.1.4",
+    "semver": "^7.3.5"
   },
   "devDependencies": {
     "-": "0.0.1",
     "serverless-cloudformation-sub-variables": "^0.2.1",
+    "serverless-esbuild": "^1.10.3",
     "serverless-iam-roles-per-function": "^3.1.0"
   },
   "scripts": {

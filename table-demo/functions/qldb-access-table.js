@@ -14,6 +14,12 @@ async function createTable(txn, tableName) {
   return txn.execute(statement);
 }
 
+async function deleteTable(txn, tableName) {
+  const statement = `DROP TABLE ${tableName}`;
+  return txn.execute(statement);
+}
+
+
 module.exports.handler = async (event, context) => {
   console.log(`QLDB Table request received:\n${JSON.stringify(event, null, 2)}`);
 
@@ -24,8 +30,8 @@ module.exports.handler = async (event, context) => {
       const driver = getQldbDriver();
       const keeperTable = "Keeper";
       const vehicleTable = "Vehicle";
-      let keeperId = '123';
-      let vehicleId = '456';
+      let keeperId;
+      let vehicleId;
 
       console.log(`Attempting to create tables`);
 
@@ -56,10 +62,32 @@ module.exports.handler = async (event, context) => {
       const responseData = { requestType: event.RequestType, 'keeperId': keeperId, 'vehicleId': vehicleId  };
       await response.send(event, context, response.SUCCESS, responseData);
     } else if (event.RequestType === 'Delete') {
-      console.log('Request received to delete QLDB table');
-      // Do nothing as table will be deleted as part of deleting QLDB Ledger
-      const responseData = { requestType: event.RequestType };
-      await response.send(event, context, response.SUCCESS, responseData);
+
+        console.log('Request received to delete QLDB table');
+        // Do nothing as table will be deleted as part of deleting QLDB Ledger
+
+
+        const driver = getQldbDriver();
+        const keeperTable = "Keeper";
+        const vehicleTable = "Vehicle";
+        console.log(`Attempting to delete tables`);
+        
+        await driver.executeLambda(async (txn) => {
+    
+            try {
+              console.log('About to delete Keeper table');
+              const keeperResult = await deleteTable(txn, keeperTable);
+              console.log('About to delete Vehicle table');
+              const vehicleResult = await deleteTable(txn, vehicleTable);
+            } catch (e) {
+                console.error(`Error deleting table: ${e}`);
+                await response.send(event, context, response.FAILED);
+            } finally {
+              driver.close();
+            }
+        });
+        const responseData = { requestType: event.RequestType };
+        await response.send(event, context, response.SUCCESS, responseData);
     } else {
       console.error('Did not recognise event type resource');
       await response.send(event, context, response.FAILED);

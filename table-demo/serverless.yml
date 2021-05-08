@@ -8,10 +8,12 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: eu-west-1
   logRetentionInDays: 7 # Set the default RetentionInDays for a CloudWatch LogGroup
+  lambdaHashingVersion: 20201221
 
 plugins:
   - serverless-cloudformation-sub-variables
   - serverless-iam-roles-per-function
+  - serverless-esbuild
 
 functions:
 
@@ -22,6 +24,7 @@ functions:
     timeout: 6
     environment:
       AWS_NODEJS_CONNECTION_REUSE_ENABLED	: "1"
+      LEDGER_NAME: !ImportValue qldb-access-control-demo
     iamRoleStatements:
       - Effect: Allow
         Action: 
@@ -35,24 +38,13 @@ functions:
 resources:
   Resources:
 
-#    qldbLedger:
-#      Type: AWS::QLDB::Ledger
-#      Properties:
-#        Name: qldb-bicycle-licence-${self:provider.stage}
-#        DeletionProtection: false
-#        PermissionsMode: ALLOW_ALL
-#        Tags:
-#          - 
-#            Key: name
-#            Value: qldb-bicycle-licence
-
     qldbTable:
       Type: Custom::qldbTable
       Properties:
         ServiceToken: !GetAtt QldbAccessTableLambdaFunction.Arn
         Version: 1.0  #change this to force redeploy
 
-    QLDBPersonReadOnlyRole:
+    qldbPersonReadOnlyRole:
       Type: 'AWS::IAM::Role'
       DependsOn: qldbTable
       Properties: 
