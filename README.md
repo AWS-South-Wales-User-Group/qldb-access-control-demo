@@ -1,5 +1,4 @@
-## QLDB Access Control Demo
-
+# QLDB Access Control Demo
 
 When QLDB was first launched, it provided a set of actions for interacting with the control plane API to manage ledgers [(see here)](https://docs.aws.amazon.com/qldb/latest/developerguide/API_Operations.html), but only a single action for interacting with a ledger using the data plane API. This meant that any user or role required the `qldb:sendCommand` permission for issuing a `PartiQL` statement against a ledger. With this IAM permission, you were able to execute all `PartiQL` commands from simple lookups, to mutating state with updates and deletes, and querying all revision history.
 
