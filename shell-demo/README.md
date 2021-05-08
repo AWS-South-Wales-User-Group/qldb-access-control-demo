@@ -23,7 +23,7 @@ I raised a feature request for multi-line support on the QLDB shell. A huge than
 
 ## Setup
 
-To setup the ledger and create the required roles, edit the `qldb-access-control.yaml` CloudFormation template and replace the `{USER_NAME}` value with your current user, that will have the ability to assume the various roles. 
+To setup the ledger and create the required roles, edit the `qldb-access-control.yaml` CloudFormation template and replace the `{USER_NAME}` value with your current user, that will have the ability to assume the various roles.
 
 ```yaml
     Statement: 
@@ -100,7 +100,7 @@ The first task is to create a table and associated index in the ledger.
 > qldb --ledger qldb-access-control
 ```
 
-### Create a table called `Person` by using the following command in the shell:
+### Create a table called `Person`
 
 ```shell
 > CREATE TABLE Person
@@ -108,7 +108,7 @@ The first task is to create a table and associated index in the ledger.
 
 This will return the unique id of the table created
 
-### Create an index called `email` on this table using the following command in the shell:
+### Create an index called `email` on this table
 
 ```shell
 > CREATE INDEX on Person (email)
