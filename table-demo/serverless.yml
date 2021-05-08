@@ -34,7 +34,6 @@ functions:
           - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control"
           - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control/*"
 
-
 resources:
   Resources:
 
@@ -68,6 +67,11 @@ resources:
                     - 'qldb:PartiQLSelect'
                   Resource:
                     - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control/"
-                    - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control/table/#{qldbTable.keeperId}/*"
+                    - !Join
+                      - ''
+                      - - 'arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/'
+                        - !ImportValue qldb-access-control-demo
+                        - '/table/#{qldbTable.keeperId}/*'
+
         RoleName: qldb-iam-ro-person
 

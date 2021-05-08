@@ -24,17 +24,17 @@ module.exports.handler = async (event, context) => {
   console.log(`QLDB Table request received:\n${JSON.stringify(event, null, 2)}`);
 
   try {
+    const keeperTable = "Keeper";
+    const vehicleTable = "Vehicle";
+
     if (event.RequestType === 'Create') {
       console.log('Attempting to create QLDB table');
 
-      const driver = getQldbDriver();
-      const keeperTable = "Keeper";
-      const vehicleTable = "Vehicle";
+      driver = getQldbDriver();
       let keeperId;
       let vehicleId;
 
       console.log(`Attempting to create tables`);
-
       
       await driver.executeLambda(async (txn) => {
   
@@ -66,10 +66,7 @@ module.exports.handler = async (event, context) => {
         console.log('Request received to delete QLDB table');
         // Do nothing as table will be deleted as part of deleting QLDB Ledger
 
-
-        const driver = getQldbDriver();
-        const keeperTable = "Keeper";
-        const vehicleTable = "Vehicle";
+        driver = getQldbDriver();
         console.log(`Attempting to delete tables`);
         
         await driver.executeLambda(async (txn) => {
@@ -93,7 +90,7 @@ module.exports.handler = async (event, context) => {
       await response.send(event, context, response.FAILED);
     }
   } catch (error) {
-    console.error(`Failed to create table in custom resource: ${JSON.stringify(error)}`);
+    console.error(`Failed in custom resource: ${JSON.stringify(error)}`);
     await response.send(event, context, response.FAILED);
   }
 };

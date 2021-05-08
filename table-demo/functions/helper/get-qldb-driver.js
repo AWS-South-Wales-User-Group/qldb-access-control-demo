@@ -25,7 +25,7 @@ function createQldbDriver() {
 }
 
 function getQldbDriver(){
-  return qldbDriver;
+  return createQldbDriver();
 };
 
 module.exports = {
