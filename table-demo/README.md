@@ -33,6 +33,17 @@ Now exit the shell, and assume the role created by the cloudformation stack:
 > source setupReadOnlyPerson.sh
 ```
 
+Next step is to connect to the ledger and attempt to retrieve the documents that have just been created:
+
+```shell
+> qldb --ledger qldb-access-control
+
+> SELECT * FROM Keeper where name='matt'
+> SELECT * FROM Vehicle where make='Ford'
+```
+
+You will notice that the first select works successfully, but the second one fails with an error message similar to the following:
+
 ```s
 "Message":"Access denied. Unable to run the statement due to insufficient permissions or an improper variable reference"
 ```
