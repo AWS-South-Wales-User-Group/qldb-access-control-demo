@@ -4,7 +4,7 @@ frameworkVersion: '2'
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: ${opt:stage, 'dev'}
   region: eu-west-1
   logRetentionInDays: 7 # Set the default RetentionInDays for a CloudWatch LogGroup
@@ -66,7 +66,7 @@ resources:
                     - 'qldb:SendCommand'
                     - 'qldb:PartiQLSelect'
                   Resource:
-                    - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control/"
+                    - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control"
                     - !Join
                       - ''
                       - - 'arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/'

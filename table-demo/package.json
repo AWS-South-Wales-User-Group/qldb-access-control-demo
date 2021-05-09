@@ -13,12 +13,14 @@
   },
   "devDependencies": {
     "-": "0.0.1",
+    "serverless": "^2.40.0",
     "serverless-cloudformation-sub-variables": "^0.2.1",
     "serverless-esbuild": "^1.10.3",
     "serverless-iam-roles-per-function": "^3.1.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sls": "serverless"
   },
   "author": "Matt Lewis",
   "license": "ISC"
