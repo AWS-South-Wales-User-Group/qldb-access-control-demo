@@ -27,11 +27,14 @@ functions:
       LEDGER_NAME: !ImportValue qldb-access-control-demo
     iamRoleStatements:
       - Effect: Allow
+        Action:
+          - 'qldb:SendCommand'
+        Resource:
+          - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
+      - Effect: Allow
         Action: 
-          - qldb:SendCommand
           - qldb:PartiQL*
         Resource: 
-          - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control"
           - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control/*"
 
 resources:
@@ -64,14 +67,16 @@ resources:
                 - Effect: Allow
                   Action:
                     - 'qldb:SendCommand'
+                  Resource:
+                    - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
+                - Effect: Allow
+                  Action:
                     - 'qldb:PartiQLSelect'
                   Resource:
-                    - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/qldb-access-control"
                     - !Join
                       - ''
                       - - 'arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/'
                         - !ImportValue qldb-access-control-demo
-                        - '/table/#{qldbTable.keeperId}/*'
-
+                        - '/table/#{qldbTable.keeperId}'
         RoleName: qldb-iam-ro-person
 
