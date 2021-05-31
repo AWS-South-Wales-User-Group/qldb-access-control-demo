@@ -13,24 +13,25 @@ In order to run the demo, the following is required:
 
 ## QLDB Shell
 
-I raised a feature request for multi-line support on the QLDB shell. A huge thank you to [Mark Bowes](https://twitter.com/marcbowes) and [Ian Davies](https://twitter.com/this_alpian) who rapidly turned around my feature request for this. Customer obsession is real at AWS. This is a new version written in Rust that is available on the AWS tap, so can be installed via Homebrew.
+The current QLDB shell is written in Python, but there is also a branch available written in Rust that has additional features. A huge thank you to [Mark Bowes](https://twitter.com/marcbowes) and [Ian Davies](https://twitter.com/this_alpian) who rapidly turned around my feature request and added a bunch of new functionality. AWS provide prebuilt binaries for Linux, Windows and macOS. On `macOS` the shell is integrated with the `aws/tap` Homebrew tap:
 
-```script
-> brew tap aws/tap
-> brew install qldbshell
-> qldb --ledger your-ledger
+```shell
+xcode-select install # required to use Homebrew
+brew tap aws/tap # Add AWS as a Homebrew tap
+brew install qldbshell
+qldb --ledger <your-ledger>
 ```
 
 ## Setup
 
-To setup the ledger and create the required roles, edit the `qldb-access-control.yaml` CloudFormation template and replace the `{USER_NAME}` value with your current user, that will have the ability to assume the various roles.
+To setup the ledger and create the required roles, edit the `qldb-access-control.yaml` CloudFormation template and replace all references to the `MattLewis` user value with your current user, that will have the ability to assume the various roles.
 
 ```yaml
     Statement: 
         - 
         Effect: "Allow"
         Principal:
-            AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/{USER_NAME}"
+            AWS:  !Sub "arn:aws:iam::${AWS::AccountId}:user/MattLewis"
         Action: 
             - "sts:AssumeRole"
 ```
@@ -38,7 +39,7 @@ To setup the ledger and create the required roles, edit the `qldb-access-control
 Once you have done this, run the following command:
 
 ```shell
-> aws cloudformation deploy --template-file ./qldb-access-control.yaml --stack-name qldb-access-control --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation deploy --template-file ./qldb-access-control.yaml --stack-name qldb-access-control --capabilities CAPABILITY_NAMED_IAM
 ```
 
 As well as creating a QLDB Ledger with the name `qldb-access-control` it sets up the following roles:
@@ -130,10 +131,10 @@ This will return the unique id of the table created
 > CREATE TABLE testTable
 ```
 
-You should see the following error message displayed:
+Depending on the version of QLDB shell, you will see an error message like the following:
 
 ```s
-WARNING: Error while executing query: An error occurred (AccessDeniedException) when calling the SendCommand operation: Access denied. Unable to run the statement due to insufficient permissions or an improper variable reference
+"Message":"Access denied. Unable to run the statement due to insufficient permissions or an improper variable reference"
 ```
 
 ## Task 2: Add Document to Table

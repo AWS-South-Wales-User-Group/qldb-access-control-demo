@@ -5,9 +5,9 @@ Resources:
   QLDBAccessControl:
     Type: "AWS::QLDB::Ledger"
     Properties:
-      DeletionProtection: true
+      DeletionProtection: false
       Name: "qldb-access-control"
-      PermissionsMode: "ALLOW_ALL"
+      PermissionsMode: "STANDARD"
       Tags:
         - Key: "name"
           Value: "qldb-access-control"
@@ -33,16 +33,14 @@ Resources:
               - Effect: Allow
                 Action:
                   - 'qldb:SendCommand'
-                  - 'qldb:PartiQL*'
-                  - 'qldb:ListLedgers'
                 Resource:
                   - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
-                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/*"
               - Effect: Allow
                 Action:
-                  - 'qldb:ListLedgers'
+                  - 'qldb:PartiQL*'
                 Resource:
-                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/*"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/table/*"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/information_schema/user_tables"
       RoleName: qldb-iam-super
 
   QLDBAdminRole:
@@ -66,13 +64,18 @@ Resources:
               - Effect: Allow
                 Action:
                   - 'qldb:SendCommand'
+                Resource:
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
+              - Effect: Allow
+                Action:
+                  - 'qldb:PartiQLInsert'
+                  - 'qldb:PartiQLUpdate'
                   - 'qldb:PartiQLDelete'
-                  - 'qldb:PartiQLAppend'
                   - 'qldb:PartiQLSelect'
                   - 'qldb:PartiQLHistoryFunction'
                 Resource:
-                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
-                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/*"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/table/*"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/information_schema/user_tables"
       RoleName: qldb-iam-admin
 
   QLDBAuditRole:
@@ -96,11 +99,16 @@ Resources:
               - Effect: Allow
                 Action:
                   - 'qldb:SendCommand'
+                Resource:
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
+
+              - Effect: Allow
+                Action:
                   - 'qldb:PartiQLSelect'
                   - 'qldb:PartiQLHistoryFunction'
                 Resource:
-                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
-                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/*"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/table/*"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/information_schema/user_tables"
       RoleName: qldb-iam-audit
 
   QLDBReadOnlyRole:
@@ -124,13 +132,18 @@ Resources:
               - Effect: Allow
                 Action:
                   - 'qldb:SendCommand'
-                  - 'qldb:PartiQLSelect'
                 Resource:
                   - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control"
-                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/*"
+              - Effect: Allow
+                Action:
+                  - 'qldb:PartiQLSelect'
+                Resource:
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/table/*"
+                  - !Sub "arn:aws:qldb:${AWS::Region}:${AWS::AccountId}:ledger/qldb-access-control/information_schema/user_tables"
       RoleName: qldb-iam-ro
 
 Outputs:
+
   qldbAccessControlLedger:
     Value:
       Ref: QLDBAccessControl
