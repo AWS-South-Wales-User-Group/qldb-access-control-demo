@@ -12,7 +12,7 @@ To setup the demo, install the dependencies and then deploy the cloudformation s
 
 ```shell
 > npm ci
-> sls deploy --stage dev
+> npm run sls -- deploy --stage dev
 ```
 
 ## Running the Demo
@@ -53,5 +53,5 @@ You will notice that the first select works successfully, but the second one fai
 To remove the stack, simply run the following command:
 
 ```shell
-> sls remove --stage dev
+> npm run sls -- remove --stage dev
 ```
